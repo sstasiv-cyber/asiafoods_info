@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ПРОдавай — Інтерактивна пам'ятка касира мережі «Азія Фудс»</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1a253c; /* Темно-синій брендовий */
+            --accent: #ff6f00;  /* Помаранчевий акцент */
+            --accent-light: #fff3e0;
+            --text-dark: #2c3e50;
+            --text-muted: #7f8c8d;
+            --bg-light: #f8f9fa;
+            --white: #ffffff;
+            --border-radius: 12px;
+            --shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        header {
+            background-color: var(--primary);
+            color: var(--white);
+            padding: 25px 20px;
+            text-align: center;
+            border-bottom-left-radius: 24px;
+            border-bottom-right-radius: 24px;
+            box-shadow: 0 4px 20px rgba(26, 37, 60, 0.15);
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        .logo-text span {
+            color: var(--accent);
+        }
+
+        header p {
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--accent);
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px 15px 80px 15px;
+        }
+
+        .intro-card {
+            background: var(--white);
+            padding: 18px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+            border-left: 4px solid var(--accent);
+        }
+
+        .intro-card h2 {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: var(--primary);
+        }
+
+        .intro-card p {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* Стиль акордеону */
+        .step-accordion {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            margin-bottom: 12px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: 1px solid #edf2f7;
+        }
+
+        .accordion-header {
+            padding: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            user-select: none;
+            background: var(--white);
+        }
+
+        .accordion-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .step-num {
+            background-color: var(--accent-light);
+            color: var(--accent);
+            font-weight: 700;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 14px;
+        }
+
+        .accordion-title h3 {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .arrow-icon {
+            width: 20px;
+            height: 20px;
+            transition: transform 0.3s ease;
+            fill: var(--text-muted);
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background: #fafbfc;
+            border-top: 0px solid #edf2f7;
+        }
+
+        .accordion-body {
+            padding: 20px 18px;
+            font-size: 14px;
+        }
+
+        /* Список інструкцій */
+        ul.instruction-list {
+            list-style: none;
+        }
+
+        ul.instruction-list li {
+            position: relative;
+            padding-left: 24px;
+            margin-bottom: 12px;
+            color: var(--text-dark);
+        }
+
+        ul.instruction-list li::before {
+            content: "•";
+            color: var(--accent);
+            font-weight: bold;
+            font-size: 20px;
+            position: absolute;
+            left: 5px;
+            top: -2px;
+        }
+
+        .warning-box {
+            background-color: #fff8e1;
+            border-left: 4px solid #ffb300;
+            padding: 12px 15px;
+            border-radius: 6px;
+            font-size: 13px;
+            margin-top: 15px;
+            font-weight: 600;
+            color: #b78103;
+        }
+
+        /* Спеціальна таблиця для мобільного */
+        .payment-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-size: 13px;
+        }
+
+        .payment-table th {
+            background-color: var(--primary);
+            color: var(--white);
+            text-align: left;
+            padding: 10px;
+            font-weight: 700;
+        }
+
+        .payment-table td {
+            padding: 10px;
+            border-bottom: 1px solid #edf2f7;
+        }
+
+        .payment-table tr:nth-child(even) {
+            background-color: #f1f3f5;
+        }
+
+        /* Кнопка швидкої прокрутки */
+        .scroll-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--accent);
+            color: var(--white);
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            z-index: 100;
+        }
+
+        .scroll-top.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* Активний стан акордеону */
+        .step-accordion.active {
+            border-color: var(--accent);
+        }
+
+        .step-accordion.active .accordion-content {
+            border-top-width: 1px;
+        }
+
+        .step-accordion.active .arrow-icon {
+            transform: rotate(180deg);
+            fill: var(--accent);
+        }
+
+        .badge {
+            background: #e2e8f0;
+            color: #4a5568;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .badge-accent {
+            background-color: var(--accent-light);
+            color: var(--accent);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-text">ПРО<span>давай</span></div>
+        <p>Мережа магазинів «Азія Фудс»</p>
+    </header>
+
+    <div class="container">
+        <div class="intro-card">
+            <h2>Інтерактивний посібник касира</h2>
+            <p>Версія ПЗ 1.3.3. Швидкі інструкції для щоденної роботи на Робочому місці касира (РМК).</p>
+        </div>
+
+        <!-- КРОК 1 -->
+        <div class="step-accordion">
+            <div class="accordion-header" onclick="toggleAccordion(this)">
+                <div class="accordion-title">
+                    <span class="step-num">1</span>
+                    <h3>Початок робочого дня</h3>
+                </div>
+                <svg class="arrow-icon" viewBox="0 0 24 24" width="24" height="24"><path d="M7 10l5 5 5-5H7z"/></svg>
+            </div>
+            <div class="accordion-content">
+                <div class="accordion-body">
+                    <ul class="instruction-list">
+                        <li><strong>Авторизація:</strong> На стартовому екрані терміналу оберіть своє ім'я та введіть персональний <strong>ПІН-код</strong>. <span class="badge">Для нових кас за замовчуванням: Admin / 0000</span></li>
+                        <li><strong>Відкриття зміни:</strong> У вікні головного «Меню» натисніть зелену кнопку <strong>«Відкрити зміну»</strong>.</li>
+                        <li><strong>Внесення розмінної монети:</strong> Якщо на початку зміни вам видано гроші для решти, обов'язково відобразіть це в системі: перейдіть у <strong>«Меню» → «Транзакції» → «Внесення готівки»</strong>, оберіть статтю транзакції, введіть точну суму та підтвердіть операцію.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- КРОК 2 -->
+        <div class="step-accordion">
+            <div class="accordion-header" onclick="toggleAccordion(this)">
+                <div class="accordion-title">
+                    <span class="step-num">2</span>
+                    <h3>Пробиття товарів у чек</h3>
+                </div>
+                <svg class="arrow-icon" viewBox="0 0 24 24" width="24" height="24"><path d="M7 10l5 5 5-5H7z"/></svg>
+            </div>
+            <div class="accordion-content">
+                <div class="accordion-body">
+                    <ul class="instruction-list">
+                        <li><strong>Сканування штрихкоду:</strong> Для додавання товару просто відскануйте його штрихкод за допомогою сканера.</li>
+                        <li><strong>Пошук у каталозі:</strong> Якщо сканер не зчитує код, ви можете знайти товар вручну в каталозі товарів за його назвою, артикулом, виробником чи категорією.</li>
+                        <li><strong>Швидкі товари:</strong> Найбільш ходові позиції винесені у праву частину екрана як «гарячі клавіші» для миттєвого додавання в один дотик.</li>
+                        <li><strong>Режим перевірки ціни:</strong> Якщо покупець просить назвати вартість товару, натисніть кнопку <strong>«Режим перевірки ціни»</strong> і відскануйте товар. Ціна відобразиться на екрані, але позиція не додасться до поточного чека.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- КРОК 3 -->
+        <div class="step-accordion">
+            <div class="accordion-header" onclick="toggleAccordion(this)">
+                <div class="accordion-title">
+                    <span class="step-num">3</span>
+                    <h3>Картки клієнтів та знижки</h3>
+                </div>
+                <svg class="arrow-icon" viewBox="0 0 24 24" width="24" height="24"><path d="M7 10l5 5 5-5H7z"/></svg>
+            </div>
+            <div class="accordion-content">
+                <div class="accordion-body">
+                    <ul class="instruction-list">
+                        <li><strong>Пошук клієнта:</strong> Натисніть кнопку <strong>«Картка клієнта»</strong> внизу чека і введіть номер телефону покупця. Система автоматично підтягне профіль та розрахує персональну знижку.</li>
+                        <li><strong>Створення нового клієнта:</strong> Якщо телефон не знайдено, система запропонує натиснути кнопку <strong>«Створити»</strong>. Введіть ПІБ та збережіть картку. <span class="badge badge-accent">Знижка за новоствореною карткою застосується вже до наступної покупки.</span></li>
+                        <li><strong>Списання накопичених бонусів:</strong> Натисніть кнопку <strong>«Бонуси»</strong> (вона стає активною тільки після додавання картки клієнта), введіть суму бонусів, яку клієнт бажає списати, та натисніть «Зберегти».</li>
+                        <li><strong>Використання промокоду:</strong> Якщо у клієнта є промокод на знижку, натисніть кнопку <strong>«Промокоди»</strong>, введіть код та підтвердіть для перерахунку вартості чека.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- КРОК 4 -->
+        <div class="step-accordion">
+            <div class="accordion-header" onclick="toggleAccordion(this)">
+                <div class="accordion-title">
+                    <span class="step-num">4</span>
+                    <h3>Розрахунок покупця</h3>
+                </div>
+                <svg class="arrow-icon" viewBox="0 0 24 24" width="24" height="24"><path d="M7 10l5 5 5-5H7z"/></svg>
+            </div>
+            <div class="accordion-content">
+                <div class="accordion-body">
+                    <p>Після формування повного списку товарів оберіть метод оплати:</p>
+                    <table class="payment-table">
+                        <thead>
+                            <tr>
+                                <th>Метод</th>
+                                <th>Порядок дій касира</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Готівка</strong></td>
+                                <td>Натисніть <strong>«Готівкою»</strong>. Введіть суму, отриману від покупця. Якщо сума під розрахунок, натисніть <strong>«Без решти»</strong>. При переплаті система автоматично виведе розмір решти.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Карта</strong></td>
+                                <td>Натисніть <strong>«Картою»</strong>. Сума автоматично відправиться на платіжний термінал. Зачекайте на успішне списання коштів банком.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Комбінована</strong></td>
+                                <td>Натисніть <strong>«Комбінована»</strong>. Вкажіть, яку частину суми клієнт сплачує готівкою, а яку — карткою, та проведіть відповідні платежі.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <ul class="instruction-list" style="margin-top: 15px;">
+                        <li><strong>Електронний чек:</strong> Якщо покупець бажає отримати цифровий фіскальний чек, перед завершенням оплати натисніть кнопку з іконкою електронного чека, введіть номер телефону клієнта та натисніть «Зберегти».</li>
+                    </ul>
+
+                    <div class="warning-box">
+                        ⚠️ ВАЖЛИВЕ ПРАВИЛО:<br>
+                        Якщо на касі проводиться додаткова послуга «Видача готівки покупцю», оплата самого товару клієнтом у цьому чеку можлива виключно за допомогою банківської картки!
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- КРОК 5 -->
+        <div class="step-accordion">
+            <div class="accordion-header" onclick="toggleAccordion(this)">
+                <div class="accordion-title">
+                    <span class="step-num">5</span>
+                    <h3>Повернення товару та архів чеків</h3>
+                </div>
+                <svg class="arrow-icon" viewBox="0 0 24 24" width="24" height="24"><path d="M7 10l5 5 5-5H7z"/></svg>
+            </div>
+            <div class="accordion-content">
+                <div class="accordion-body">
+                    <ul class="instruction-list">
+                        <li><strong>Архів чеків:</strong> Для перегляду раніше пробитих чеків або друку дубліката перейдіть в <strong>«Архів чеків»</strong> поточної зміни. Там ви зможете детально переглянути будь-який чек або скористатися вкладкою «Відкладені чеки» для продовження роботи з відкладеною покупкою.</li>
+                        <li><strong>Проведення повернення:</strong> Знайдіть потрібний чек в Архіві чеків та натисніть кнопку <strong>«Повернення»</strong>. У вікні, що відкрилося, виберіть конкретні позиції, вкажіть кількість та обов'язково зазначте причину повернення, після чого підтвердіть операцію.</li>
+                    </ul>
+                    <div class="warning-box" style="border-left-color: #e53935; background-color: #ffebee; color: #c62828;">
+                        🚨 СИСТЕМНЕ ОБМЕЖЕННЯ:<br>
+                        Згідно з налаштуваннями безпеки «ПРОдавай», оформлення повернення товару допускається проводити виключно з причини невідповідної якості товару.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- КРОК 6 -->
+        <div class="step-accordion">
+            <div class="accordion-header" onclick="toggleAccordion(this)">
+                <div class="accordion-title">
+                    <span class="step-num">6</span>
+                    <h3>Закриття робочої зміни</h3>
+                </div>
+                <svg class="arrow-icon" viewBox="0 0 24 24" width="24" height="24"><path d="M7 10l5 5 5-5H7z"/></svg>
+            </div>
+            <div class="accordion-content">
+                <div class="accordion-body">
+                    <ul class="instruction-list">
+                        <li><strong>Інкасація (Вилучення):</strong> Перед закриттям зміни обов'язково вилучіть усю накопичену готівку з каси. Перейдіть у <strong>«Меню» → «Транзакції» → «Вилучення готівки»</strong> (Інкасація), введіть суму залишку та підтвердіть вилучення грошей до сейфа.</li>
+                        <li><strong>Відкладені чеки:</strong> Якщо у вас залишилися незавершені відкладені чеки, не хвилюйтеся — програма автоматично перенесе їх на наступну робочу зміну.</li>
+                        <li><strong>Друк Z-Звіту:</strong> Перейдіть у <strong>«Меню»</strong>, натисніть кнопку <strong>«Закрити зміну»</strong> та підтвердіть операцію. Після успішного закриття натисніть <strong>«Друк Z-звіту»</strong> для відправлення фіскальних даних у ПРРО та друку паперового звіту.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Кнопка вгору -->
+    <div class="scroll-top" id="scrollTopBtn" onclick="scrollToTop()">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="white"><path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/></svg>
+    </div>
+
+    <script>
+        // Функція для розкриття/приховання акордеону
+        function toggleAccordion(header) {
+            const accordion = header.parentElement;
+            const content = accordion.querySelector('.accordion-content');
+            
+            // Якщо цей акордеон вже відкритий — закриваємо його
+            if (accordion.classList.contains('active')) {
+                content.style.maxHeight = null;
+                accordion.classList.remove('active');
+            } else {
+                // Закриваємо всі інші акордеони для зручності на мобільних
+                document.querySelectorAll('.step-accordion').forEach(acc => {
+                    acc.classList.remove('active');
+                    acc.querySelector('.accordion-content').style.maxHeight = null;
+                });
+                
+                // Відкриваємо поточний
+                accordion.classList.add('active');
+                content.style.maxHeight = content.scrollHeight + "px";
+            }
+        }
+
+        // Кнопка прокрутки вгору
+        const scrollTopBtn = document.getElementById("scrollTopBtn");
+        window.onscroll = function() {
+            if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+                scrollTopBtn.classList.add("show");
+            } else {
+                scrollTopBtn.classList.remove("show");
+            }
+        };
+
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
