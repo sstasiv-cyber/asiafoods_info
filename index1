@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Стратегічний Звіт CX та Підтримки — Asia Foods</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts (Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#fffbeb',
+                            100: '#fef3c7',
+                            500: '#d97706',
+                            700: '#b45309',
+                            800: '#92400e',
+                            900: '#78350f',
+                        },
+                        neutralbg: '#fbf9f5',
+                        cardbg: '#ffffff',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #fbf9f5;
+            color: #292524;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 650px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 320px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 360px;
+            }
+        }
+        .tab-active {
+            border-bottom: 3px solid #b45309;
+            color: #b45309;
+            font-weight: 600;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #d6d3d1;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased min-h-screen flex flex-col">
+
+    <!-- Chosen Palette: Warm Neutral Harmonious Palette (Cream, Warm Slate, Soft Amber, Muted Sage) -->
+    <!-- Application Structure Plan: Executive SPA layout designed for owners and executives. Features: 1) Executive Summary Cards & Metrics Overview; 2) Dynamic Trend Comparison across 4 Stages; 3) Interactive Inquiry Distribution & B2B Lead Explorer; 4) Key Pain Points & Revenue Loss Analysis with financial impact sliders; 5) Manager Efficiency & Workload Analysis; 6) Strategic Action Plan & Automation Roadmap; 7) Word Document Text Exporter for quick presentation creation. -->
+    <!-- Visualization & Content Choices: Quantitative data mapped to Chart.js responsive Canvas charts (Line chart for 4-stage dynamics, Donut chart for query types, Bar chart for operator workload/CSAT). Qualitative findings & B2B leads organized into interactive cards and filterable tables. NO SVG graphics used, NO Mermaid JS used. Unicode/CSS icons and Tailwind grid layout applied. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <!-- Header Section -->
+    <header class="bg-white border-b border-stone-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div>
+                    <div class="flex items-center space-x-3">
+                        <span class="text-2xl">📊</span>
+                        <div>
+                            <h1 class="text-xl font-bold text-stone-900 tracking-tight">Asia Foods — Стратегічний Звіт CX-Аналітики</h1>
+                            <p class="text-xs text-stone-500">Зведений аналіз клієнтського сервісу та ефективності чату за 4 періоди (27.07.2026 – 18.08.2026)</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+                        168 Проаналізованих сесій
+                    </span>
+                    <button onclick="switchTab('export')" class="px-4 py-2 text-xs font-medium bg-amber-700 hover:bg-amber-800 text-white rounded-lg shadow-sm transition-all flex items-center gap-2">
+                        <span>📄</span> Текст для Word / Презентації
+                    </button>
+                </div>
+            </div>
+
+            <!-- Navigation Tabs -->
+            <nav class="flex space-x-6 mt-4 border-t border-stone-100 pt-3 overflow-x-auto custom-scrollbar text-xs sm:text-sm font-medium text-stone-600">
+                <button onclick="switchTab('summary')" id="tab-summary" class="tab-btn pb-2 border-b-2 border-transparent hover:text-stone-900 whitespace-nowrap tab-active">
+                    🎯 Executive Summary
+                </button>
+                <button onclick="switchTab('dynamics')" id="tab-dynamics" class="tab-btn pb-2 border-b-2 border-transparent hover:text-stone-900 whitespace-nowrap">
+                    📈 Динаміка 4-х Етапів
+                </button>
+                <button onclick="switchTab('categories')" id="tab-categories" class="tab-btn pb-2 border-b-2 border-transparent hover:text-stone-900 whitespace-nowrap">
+                    🧩 Структура Запитів & B2B
+                </button>
+                <button onclick="switchTab('pains')" id="tab-pains" class="tab-btn pb-2 border-b-2 border-transparent hover:text-stone-900 whitespace-nowrap">
+                    🚨 Втрати Виручки (Pain Points)
+                </button>
+                <button onclick="switchTab('managers')" id="tab-managers" class="tab-btn pb-2 border-b-2 border-transparent hover:text-stone-900 whitespace-nowrap">
+                    👩‍💼 Аналіз Операторів
+                </button>
+                <button onclick="switchTab('roadmap')" id="tab-roadmap" class="tab-btn pb-2 border-b-2 border-transparent hover:text-stone-900 whitespace-nowrap">
+                    💡 План Автоматизації & KPI
+                </button>
+                <button onclick="switchTab('export')" id="tab-export" class="tab-btn pb-2 border-b-2 border-transparent hover:text-stone-900 whitespace-nowrap text-amber-800 font-semibold">
+                    📄 Експорт для Word
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
+
+        <!-- TAB 1: EXECUTIVE SUMMARY -->
+        <section id="content-summary" class="tab-content space-y-6">
+            
+            <!-- Section Introductory Paragraph -->
+            <div class="bg-amber-50/60 border border-amber-200/80 rounded-xl p-5">
+                <h2 class="text-base font-semibold text-amber-900 flex items-center gap-2 mb-1">
+                    <span>💡</span> Призначення розділу та ключові висновки для Власників
+                </h2>
+                <p class="text-xs sm:text-sm text-stone-700 leading-relaxed">
+                    Цей розділ узагальнює ключові результати роботи онлайн-підтримки компанії «Asia Foods» за зафіксований період (27 липня — 18 серпня 2026 року). У ньому зібрані головні показники ефективності (KPI), оцінка якості обслуговування (CSAT) та підсумкова оцінка системних ризиків, які впливають на підсумковий виторг компанії.
+                </p>
+            </div>
+
+            <!-- Metric Cards Row -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-white p-5 rounded-xl border border-stone-200 shadow-sm hover:shadow-md transition-shadow">
+                    <div class="text-xs font-semibold text-stone-500 uppercase tracking-wider">Всього Сесій</div>
+                    <div class="text-3xl font-bold text-stone-900 mt-2">168</div>
+                    <div class="text-xs text-stone-500 mt-1">
+                        <span class="text-emerald-600 font-medium">95</span> цільових продавальних діалогів
+                    </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-xl border border-stone-200 shadow-sm hover:shadow-md transition-shadow">
+                    <div class="text-xs font-semibold text-stone-500 uppercase tracking-wider">Resolution Rate (Успішність)</div>
+                    <div class="text-3xl font-bold text-emerald-600 mt-2">81.2%</div>
+                    <div class="text-xs text-stone-500 mt-1">
+                        Зростання з <span class="font-medium text-stone-700">62.0%</span> на Етапі 1
+                    </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-xl border border-stone-200 shadow-sm hover:shadow-md transition-shadow">
+                    <div class="text-xs font-semibold text-stone-500 uppercase tracking-wider">Середній CSAT (Оцінка)</div>
+                    <div class="text-3xl font-bold text-amber-600 mt-2">9.23 / 10</div>
+                    <div class="text-xs text-stone-500 mt-1">
+                        Пік <span class="font-medium text-stone-700">9.7 / 10</span> на останньому тижні
+                    </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-xl border border-stone-200 shadow-sm hover:shadow-md transition-shadow">
+                    <div class="text-xs font-semibold text-stone-500 uppercase tracking-wider">Втрати Ліди у Вихідні</div>
+                    <div class="text-3xl font-bold text-rose-600 mt-2">~20%</div>
+                    <div class="text-xs text-stone-500 mt-1">
+                        Простій у Сб (після 16:00) та Нд
+                    </div>
+                </div>
+            </div>
+
+            <!-- Key Findings & Strategic Summary Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Strategic Highlights -->
+                <div class="lg:col-span-2 bg-white p-6 rounded-xl border border-stone-200 shadow-sm">
+                    <h3 class="text-base font-bold text-stone-900 mb-4 flex items-center gap-2">
+                        <span>🔑</span> Позитивні Зрушення та Еталонна Робота
+                    </h3>
+                    <ul class="space-y-3 text-xs sm:text-sm text-stone-700">
+                        <li class="flex items-start gap-3 bg-stone-50 p-3 rounded-lg border border-stone-100">
+                            <span class="text-emerald-600 text-lg">📈</span>
+                            <div>
+                                <strong class="text-stone-900">Професійне утримання та Cross-sell/Upsell:</strong>
+                                Оператор Вікторія показує взірцеву роботу з асортиментом (наприклад, підбір раменів Buldak/Shin Ramyun, роз'яснення відмінностей соусів Lee Kum Kee та Mae Krua, консультації щодо тапіоки та олій).
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3 bg-stone-50 p-3 rounded-lg border border-stone-100">
+                            <span class="text-emerald-600 text-lg">🛠️</span>
+                            <div>
+                                <strong class="text-stone-900">Ручне рятування продажів при збоях Prom.ua:</strong>
+                                При відмовах кошика оператор вручну збирає замовлення в чаті, прораховує суму зі знижками (наприклад, ручне застосування промокодів post-factum) і виставляє IBAN, не втрачаючи клієнта.
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3 bg-stone-50 p-3 rounded-lg border border-stone-100">
+                            <span class="text-emerald-600 text-lg">📉</span>
+                            <div>
+                                <strong class="text-stone-900">Зниження відтоку клієнтів (Abandonment Rate):</strong>
+                                Показник втрачених звернень в робочий час впав з 28% на початку аналізу до рекордних 9.1% завдяки оперативності реагування в чаті.
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Strategic Systemic Risks -->
+                <div class="bg-white p-6 rounded-xl border border-stone-200 shadow-sm border-l-4 border-l-rose-500">
+                    <h3 class="text-base font-bold text-stone-900 mb-4 flex items-center gap-2">
+                        <span>🚨</span> Системні Втрати Виручки
+                    </h3>
+                    <div class="space-y-4 text-xs sm:text-sm text-stone-700">
+                        <div>
+                            <div class="font-semibold text-rose-700">1. Перевантаження рутиною (48.2%)</div>
+                            <p class="text-stone-600 mt-1">48.2% звернень — це шаблонні питання ("Де ТТН?", "Графік", "Адреса"), які оператори обробляють вручну замість B2B та продажів.</p>
+                        </div>
+                        <hr class="border-stone-100">
+                        <div>
+                            <div class="font-semibold text-rose-700">2. "Сліпа зона" у вихідні дні</div>
+                            <p class="text-stone-600 mt-1">Покупці, що роблять замовлення в Сб ввечері та Нд, чекають IBAN до ранку Пн. До 20% гарячих оплат відпадають або йдуть до конкурентів.</p>
+                        </div>
+                        <hr class="border-stone-100">
+                        <div>
+                            <div class="font-semibold text-rose-700">3. Розрив з офлайн-магазинами</div>
+                            <p class="text-stone-600 mt-1">Питання щодо наявності товарів у Києві/Львові/Житомирі або видачі фіскальних чеків (Smart Plaza) перенаправляються на невідповідаючі телефони точок.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 2: DYNAMICS ACROSS 4 STAGES -->
+        <section id="content-dynamics" class="tab-content hidden space-y-6">
+            
+            <div class="bg-amber-50/60 border border-amber-200/80 rounded-xl p-5">
+                <h2 class="text-base font-semibold text-amber-900 flex items-center gap-2 mb-1">
+                    <span>📈</span> Динаміка та Поетапне Зростання Показників
+                </h2>
+                <p class="text-xs sm:text-sm text-stone-700 leading-relaxed">
+                    Аналіз поділено на 4 послідовні часові етапи. Дані демонструють стійку позитивну динаміку вирішення питань клієнтів (Resolution Rate) та зростання оцінки сервісу, що підтверджує високий професіоналізм оператора чату.
+                </p>
+            </div>
+
+            <!-- Chart and Table Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                
+                <!-- Chart Container -->
+                <div class="lg:col-span-6 bg-white p-6 rounded-xl border border-stone-200 shadow-sm">
+                    <h3 class="text-sm font-bold text-stone-900 mb-2 text-center">Динаміка Успішності (Resolution Rate) та Відтоку (Abandonment)</h3>
+                    <p class="text-xs text-stone-500 mb-4 text-center">Поетапне покращення конверсії діалогів у розрізі 4 періодів</p>
+                    <div class="chart-container">
+                        <canvas id="dynamicsChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Consolidated Statistics Table -->
+                <div class="lg:col-span-6 bg-white p-6 rounded-xl border border-stone-200 shadow-sm overflow-x-auto">
+                    <h3 class="text-sm font-bold text-stone-900 mb-4">Зведена Порівняльна Таблиця за Етапами</h3>
+                    <table class="w-full text-left text-xs text-stone-700 border-collapse">
+                        <thead>
+                            <tr class="bg-stone-100 text-stone-800 font-semibold border-b border-stone-200">
+                                <th class="p-2.5">Метрика / Показник</th>
+                                <th class="p-2.5 text-center">Етап 1<br><span class="text-[10px] font-normal text-stone-500">27.07–31.07</span></th>
+                                <th class="p-2.5 text-center">Етап 2<br><span class="text-[10px] font-normal text-stone-500">01.08–05.08</span></th>
+                                <th class="p-2.5 text-center">Етап 3<br><span class="text-[10px] font-normal text-stone-500">06.08–14.08</span></th>
+                                <th class="p-2.5 text-center">Етап 4<br><span class="text-[10px] font-normal text-stone-500">15.08–18.08</span></th>
+                                <th class="p-2.5 text-right bg-amber-50 font-bold">Всього</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-stone-100">
+                            <tr>
+                                <td class="p-2.5 font-medium text-stone-900">Всього сесій у чаті</td>
+                                <td class="p-2.5 text-center">49</td>
+                                <td class="p-2.5 text-center">38</td>
+                                <td class="p-2.5 text-center">63</td>
+                                <td class="p-2.5 text-center">18</td>
+                                <td class="p-2.5 text-right font-bold bg-amber-50/50">168</td>
+                            </tr>
+                            <tr>
+                                <td class="p-2.5 font-medium text-stone-900">Реальні цільові діалоги</td>
+                                <td class="p-2.5 text-center">32</td>
+                                <td class="p-2.5 text-center">18</td>
+                                <td class="p-2.5 text-center">34</td>
+                                <td class="p-2.5 text-center">11</td>
+                                <td class="p-2.5 text-right font-bold bg-amber-50/50">95 (56.5%)</td>
+                            </tr>
+                            <tr>
+                                <td class="p-2.5 text-stone-600">Шаблонні авто-кліки</td>
+                                <td class="p-2.5 text-center">10</td>
+                                <td class="p-2.5 text-center">14</td>
+                                <td class="p-2.5 text-center">21</td>
+                                <td class="p-2.5 text-center">5</td>
+                                <td class="p-2.5 text-right font-semibold bg-amber-50/50">50 (29.8%)</td>
+                            </tr>
+                            <tr>
+                                <td class="p-2.5 text-stone-600">Офлайн-форми (Вихідні/Ніч)</td>
+                                <td class="p-2.5 text-center">0</td>
+                                <td class="p-2.5 text-center">6</td>
+                                <td class="p-2.5 text-center">12</td>
+                                <td class="p-2.5 text-center">2</td>
+                                <td class="p-2.5 text-right font-semibold bg-amber-50/50">20 (11.9%)</td>
+                            </tr>
+                            <tr>
+                                <td class="p-2.5 text-stone-600">Спам / Порожні / Тести</td>
+                                <td class="p-2.5 text-center">7</td>
+                                <td class="p-2.5 text-center">0</td>
+                                <td class="p-2.5 text-center">0</td>
+                                <td class="p-2.5 text-center">0</td>
+                                <td class="p-2.5 text-right font-semibold bg-amber-50/50">7 (4.2%)</td>
+                            </tr>
+                            <tr class="bg-emerald-50/40">
+                                <td class="p-2.5 font-bold text-emerald-800">Resolution Rate</td>
+                                <td class="p-2.5 text-center font-semibold text-emerald-700">~62.0%</td>
+                                <td class="p-2.5 text-center font-semibold text-emerald-700">~66.7%</td>
+                                <td class="p-2.5 text-center font-semibold text-emerald-700">~78.5%</td>
+                                <td class="p-2.5 text-center font-bold text-emerald-800">~81.2%</td>
+                                <td class="p-2.5 text-right font-bold text-emerald-900 bg-amber-100/50">📈 Ріст</td>
+                            </tr>
+                            <tr class="bg-rose-50/30">
+                                <td class="p-2.5 font-medium text-rose-800">Abandonment Rate</td>
+                                <td class="p-2.5 text-center text-rose-700">~28.0%</td>
+                                <td class="p-2.5 text-center text-rose-700">~16.7%</td>
+                                <td class="p-2.5 text-center text-rose-700">~11.2%</td>
+                                <td class="p-2.5 text-center font-semibold text-rose-800">~9.1%</td>
+                                <td class="p-2.5 text-right font-bold text-emerald-700 bg-amber-50/50">📉 Падіння</td>
+                            </tr>
+                            <tr>
+                                <td class="p-2.5 font-medium text-stone-900">Середня оцінка CSAT</td>
+                                <td class="p-2.5 text-center">8.2 / 10</td>
+                                <td class="p-2.5 text-center">9.4 / 10</td>
+                                <td class="p-2.5 text-center">9.6 / 10</td>
+                                <td class="p-2.5 text-center font-bold text-amber-700">9.7 / 10</td>
+                                <td class="p-2.5 text-right font-bold text-stone-900 bg-amber-100/50">⭐ 9.23</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 3: INQUIRY CATEGORIES & B2B LEADS -->
+        <section id="content-categories" class="tab-content hidden space-y-6">
+            
+            <div class="bg-amber-50/60 border border-amber-200/80 rounded-xl p-5">
+                <h2 class="text-base font-semibold text-amber-900 flex items-center gap-2 mb-1">
+                    <span>🧩</span> Структура Запитів Покупців та B2B Ліди
+                </h2>
+                <p class="text-xs sm:text-sm text-stone-700 leading-relaxed">
+                    Розподіл 168 звернень показує високий інтерес до продукції (азійські соуси, лапша Buldak, BTS Oreo, тапіока), але водночас демонструє значний відсоток стандартної рутини. У цьому ж масиві зафіксовано потужні оптові та корпоративні звернення.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                
+                <!-- Category Chart -->
+                <div class="lg:col-span-5 bg-white p-6 rounded-xl border border-stone-200 shadow-sm">
+                    <h3 class="text-sm font-bold text-stone-900 mb-2 text-center">Розподіл Причин Звернень (N=168)</h3>
+                    <p class="text-xs text-stone-500 mb-4 text-center">Частка кожної категорії у загальному масиві</p>
+                    <div class="chart-container">
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- B2B Leads Showcase -->
+                <div class="lg:col-span-7 bg-white p-6 rounded-xl border border-stone-200 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-sm font-bold text-stone-900 flex items-center gap-2">
+                                <span>🏢</span> Зафіксовані B2B & Оптові Звернення (Чеки від 10 000+ грн)
+                            </h3>
+                            <span class="text-xs bg-amber-100 text-amber-800 font-semibold px-2.5 py-0.5 rounded-full">6.5% від загалу</span>
+                        </div>
+                        <p class="text-xs text-stone-600 mb-4">
+                            Вхідні ліди у звичайному чаті сайту мають високий потенціал довгострокових контрактів, проте потребують окремого регламенту обробки.
+                        </p>
+
+                        <div class="space-y-3 text-xs">
+                            <div class="p-3 bg-stone-50 rounded-lg border border-stone-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                                <div>
+                                    <span class="font-bold text-stone-900">«ДП Пілснер Україна»</span> 
+                                    <span class="text-stone-500">(Сергій Крамаренко)</span>
+                                    <p class="text-stone-600">Великий імпортер пива та напоїв з Азії. Пропозиція співпраці та дистрибуції.</p>
+                                </div>
+                                <span class="px-2 py-1 bg-blue-100 text-blue-800 font-medium rounded text-[11px] whitespace-nowrap self-start sm:self-center">
+                                    Передано в Закупівлі
+                                </span>
+                            </div>
+
+                            <div class="p-3 bg-stone-50 rounded-lg border border-stone-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                                <div>
+                                    <span class="font-bold text-stone-900">Ресторан «Ікігай»</span> 
+                                    <span class="text-stone-500">(м. Харків)</span>
+                                    <p class="text-stone-600">Запит на постачання інгредієнтів для закладу (ID 40282431). Збій корпоративного зв'язку.</p>
+                                </div>
+                                <span class="px-2 py-1 bg-amber-100 text-amber-800 font-medium rounded text-[11px] whitespace-nowrap self-start sm:self-center">
+                                    Потребує контролю
+                                </span>
+                            </div>
+
+                            <div class="p-3 bg-stone-50 rounded-lg border border-stone-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                                <div>
+                                    <span class="font-bold text-stone-900">Мережа з 70 ТТ у Дніпрі & Торгові точки у Рівному</span>
+                                    <p class="text-stone-600">Оптові прайси на соуси, пасту Гочуджан (1000г) та безналоговий розрахунок для HoReCa.</p>
+                                </div>
+                                <span class="px-2 py-1 bg-emerald-100 text-emerald-800 font-medium rounded text-[11px] whitespace-nowrap self-start sm:self-center">
+                                    Опрацьовано
+                                </span>
+                            </div>
+
+                            <div class="p-3 bg-stone-50 rounded-lg border border-stone-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                                <div>
+                                    <span class="font-bold text-stone-900">Оптовий запит з м. Чернігів</span> 
+                                    <span class="text-stone-500">(Юрій, ID 40383262)</span>
+                                    <p class="text-stone-600">Запит на оптовий прайс для магазинів (yuriyvada@gmail.com).</p>
+                                </div>
+                                <span class="px-2 py-1 bg-blue-100 text-blue-800 font-medium rounded text-[11px] whitespace-nowrap self-start sm:self-center">
+                                    Передано в гурт
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 4: PAIN POINTS & REVENUE LOSSES -->
+        <section id="content-pains" class="tab-content hidden space-y-6">
+            
+            <div class="bg-amber-50/60 border border-amber-200/80 rounded-xl p-5">
+                <h2 class="text-base font-semibold text-amber-900 flex items-center gap-2 mb-1">
+                    <span>🚨</span> Трійка Головних "Pain Points" — Де Компанія Втрачає Гроші
+                </h2>
+                <p class="text-xs sm:text-sm text-stone-700 leading-relaxed">
+                    Глибокий аналіз діалогів показав три основні системні бар'єри, які спричиняють прямі фінансові втрати, затримують роботу операторів або погіршують NPS компанії.
+                </p>
+            </div>
+
+            <!-- Pain Points Cards Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                
+                <!-- Pain Point 1 -->
+                <div class="bg-white p-6 rounded-xl border border-stone-200 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center gap-2 text-rose-600 font-bold text-sm mb-2">
+                            <span>🔴</span> 1. Збої Кошика Prom.ua
+                        </div>
+                        <h3 class="text-base font-bold text-stone-900 mb-2">Неможливість оформити замовлення</h3>
+                        <p class="text-xs text-stone-600 mb-4 leading-relaxed">
+                            Покупці не можуть додати товар у кошик або завершить чек на Prom.ua. Оператори (Вікторія) змушені вручну збирати дані в чаті, прораховувати суму зі знижками, виставляти IBAN і передавати на склад.
+                        </p>
+                    </div>
+                    <div class="bg-rose-50 p-3 rounded-lg border border-rose-100 text-xs">
+                        <span class="font-bold text-rose-900">Вплив:</span> Займає 8-12 хвилин ручної роботи на 1 замовлення. При піковому навантаженні створює чергу в чаті.
+                    </div>
+                </div>
+
+                <!-- Pain Point 2 -->
+                <div class="bg-white p-6 rounded-xl border border-stone-200 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center gap-2 text-rose-600 font-bold text-sm mb-2">
+                            <span>🔴</span> 2. "Сліпа Зона" Фізичних Магазинів
+                        </div>
+                        <h3 class="text-base font-bold text-stone-900 mb-2">Відсутність зв'язку з офлайн-точками</h3>
+                        <p class="text-xs text-stone-600 mb-4 leading-relaxed">
+                            Клієнти запитують наявність у Києві (Smart Plaza, Ахматової), Житомирі або Львові, або вимагають електронні фіскальні чеки. Оператор чату дає прямий телефон магазину, де часто **не беруть слухавку**.
+                        </p>
+                    </div>
+                    <div class="bg-rose-50 p-3 rounded-lg border border-rose-100 text-xs">
+                        <span class="font-bold text-rose-900">Вплив:</span> Негативні оцінки (наприклад, 1/5) та втрата клієнтів, які вже знаходяться біля магазину.
+                    </div>
+                </div>
+
+                <!-- Pain Point 3 -->
+                <div class="bg-white p-6 rounded-xl border border-stone-200 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center gap-2 text-rose-600 font-bold text-sm mb-2">
+                            <span>🔴</span> 3. Простій у Вихідні Дні
+                        </div>
+                        <h3 class="text-base font-bold text-stone-900 mb-2">Субота ввечері та Неділя</h3>
+                        <p class="text-xs text-stone-600 mb-4 leading-relaxed">
+                            Клієнт робить замовлення в Сб о 17:00 або в Нд і просить IBAN для оплати. Відповідь від оператора приходить лише в понеділок о 09:00.
+                        </p>
+                    </div>
+                    <div class="bg-rose-50 p-3 rounded-lg border border-rose-100 text-xs">
+                        <span class="font-bold text-rose-900">Вплив:</span> Втрата конверсії гарячих оплат до **20%**. За неділю клієнт купує в іншому місці.
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Detailed Case Study / Incident Highlight -->
+            <div class="bg-stone-900 text-white p-6 rounded-xl shadow-md">
+                <h3 class="text-sm font-bold text-amber-400 mb-2 flex items-center gap-2">
+                    <span>⚠️</span> Показовий Кейс: Втрачена Оплата у Вихідні (ID 40129913 & ID 40378952)
+                </h3>
+                <p class="text-xs sm:text-sm text-stone-300 leading-relaxed">
+                    Клієнт Олександра звернулась у суботу ввечері з проханням: <em class="text-white">"Надішліть реквізити для оплати замовлення"</em>. Автоматична видача IBAN була відсутня. Клієнт чекала до понеділка. За цей час частина подібних покупців скасовує замовлення. Впровадження авто-видачі IBAN ботом повністю закриває цю прогалину.
+                </p>
+            </div>
+        </section>
+
+        <!-- TAB 5: MANAGER EFFICIENCY -->
+        <section id="content-managers" class="tab-content hidden space-y-6">
+            
+            <div class="bg-amber-50/60 border border-amber-200/80 rounded-xl p-5">
+                <h2 class="text-base font-semibold text-amber-900 flex items-center gap-2 mb-1">
+                    <span>👩‍💼</span> Порівняльний Аналіз Ефективності Операторів
+                </h2>
+                <p class="text-xs sm:text-sm text-stone-700 leading-relaxed">
+                    Оцінка навантаження та якості роботи менеджерів підтримки за весь період. Порівняння показує суттєвий перекос у розподілі чатів та різницю в підходах до консультацій.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                
+                <!-- Chart -->
+                <div class="lg:col-span-5 bg-white p-6 rounded-xl border border-stone-200 shadow-sm">
+                    <h3 class="text-sm font-bold text-stone-900 mb-2 text-center">Розподіл Навантаження між Операторами</h3>
+                    <p class="text-xs text-stone-500 mb-4 text-center">Кількість оброблених цільових чатів</p>
+                    <div class="chart-container">
+                        <canvas id="managerChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Comparison Cards / Table -->
+                <div class="lg:col-span-7 space-y-4">
+                    
+                    <!-- Victoria Card -->
+                    <div class="bg-white p-5 rounded-xl border-l-4 border-l-emerald-500 border border-stone-200 shadow-sm">
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="text-base font-bold text-stone-900">Вікторія (Віка) — Основний Оператор</h3>
+                            <span class="text-xs bg-emerald-100 text-emerald-800 font-bold px-2.5 py-1 rounded-full">CSAT: 9.6 / 10</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 text-xs text-stone-600 mb-3">
+                            <div>Оброблено чатів: <strong class="text-stone-900">142 чати (~88%)</strong></div>
+                            <div>Продажні діалоги: <strong class="text-stone-900">Висока конверсія</strong></div>
+                        </div>
+                        <p class="text-xs text-stone-700 leading-relaxed">
+                            <strong>Сильні сторони:</strong> Глибоке знання азійського асортименту, активні допродажі (upsell/cross-sell), еталонна ввічливість, виправлення помилок з промокодами, англомовне обслуговування (ID 40233660), ручне формування кошика.
+                        </p>
+                    </div>
+
+                    <!-- Veronika Card -->
+                    <div class="bg-white p-5 rounded-xl border-l-4 border-l-amber-500 border border-stone-200 shadow-sm">
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="text-base font-bold text-stone-900">Вероніка — Підміняючий Оператор</h3>
+                            <span class="text-xs bg-amber-100 text-amber-800 font-bold px-2.5 py-1 rounded-full">CSAT: 7.8 / 10</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 text-xs text-stone-600 mb-3">
+                            <div>Оброблено чатів: <strong class="text-stone-900">26 чатів (~12%)</strong></div>
+                            <div>Залученість: <strong class="text-stone-900">Епізодична</strong></div>
+                        </div>
+                        <p class="text-xs text-stone-700 leading-relaxed">
+                            <strong>Сильні сторони та зони зростання:</strong> Лаконічні відповіді, швидка робота з логістикою. Зона зростання — проактивність у консультаціях. Наприклад, на запит про бобову пасту або сирний булдак дає коротке "ні" або "бажаєте замовити?", не пропонуючи альтернатив з наявного асортименту.
+                        </p>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+        <!-- TAB 6: ROADMAP & STRATEGIC RECOMMENDATIONS -->
+        <section id="content-roadmap" class="tab-content hidden space-y-6">
+            
+            <div class="bg-amber-50/60 border border-amber-200/80 rounded-xl p-5">
+                <h2 class="text-base font-semibold text-amber-900 flex items-center gap-2 mb-1">
+                    <span>💡</span> Стратегічні Рекомендації та План Дій (Roadmap)
+                </h2>
+                <p class="text-xs sm:text-sm text-stone-700 leading-relaxed">
+                    Покроковий план автоматизації та системних змін для власників бізнесу, розрахований на усунення втрат виручки, вивільнення часу операторів та підвищення конверсії чату.
+                </p>
+            </div>
+
+            <!-- Action Plan Steps Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                
+                <div class="bg-white p-6 rounded-xl border border-stone-200 shadow-sm">
+                    <div class="w-8 h-8 bg-amber-100 text-amber-800 rounded-full flex items-center justify-center font-bold text-sm mb-4">1</div>
+                    <h3 class="text-sm font-bold text-stone-900 mb-2">Автовидача IBAN у Вихідні</h3>
+                    <p class="text-xs text-stone-600 mb-3 leading-relaxed">
+                        Впровадити авто-сценарій чат-бота: якщо ввечері або в неділю клієнт вводить номер замовлення, бот автоматично генерує та надсилає офіційні реквізити IBAN з інструкцією.
+                    </p>
+                    <span class="text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-1 rounded">
+                        Результат: +15-20% збережених оплат
+                    </span>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl border border-stone-200 shadow-sm">
+                    <div class="w-8 h-8 bg-amber-100 text-amber-800 rounded-full flex items-center justify-center font-bold text-sm mb-4">2</div>
+                    <h3 class="text-sm font-bold text-stone-900 mb-2">Автоматизація ТТН & Статусів</h3>
+                    <p class="text-xs text-stone-600 mb-3 leading-relaxed">
+                        Підключити інтеграцію з API Нової Пошти/KeyCRM, щоб кнопка "Де моє замовлення?" автоматично видавала статус та номер ТТН за номером телефону клієнта без залучення оператора.
+                    </p>
+                    <span class="text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-1 rounded">
+                        Результат: Мінус 30% рутини в чаті
+                    </span>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl border border-stone-200 shadow-sm">
+                    <div class="w-8 h-8 bg-amber-100 text-amber-800 rounded-full flex items-center justify-center font-bold text-sm mb-4">3</div>
+                    <h3 class="text-sm font-bold text-stone-900 mb-2">Інтеграція ПРРО та Офлайн-бази</h3>
+                    <p class="text-xs text-stone-600 mb-3 leading-relaxed">
+                        Надати операторам чату доступ до пошуку фіскальних чеків (Вчасно/Checkbox) за сумою/часом, а також планшетний доступ до залишків магазинів у Києві, Житомирі та Львові.
+                    </p>
+                    <span class="text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-1 rounded">
+                        Результат: Зростання CSAT офлайн-клієнтів
+                    </span>
+                </div>
+
+            </div>
+
+            <!-- KPI Framework Table for Management -->
+            <div class="bg-white p-6 rounded-xl border border-stone-200 shadow-sm">
+                <h3 class="text-sm font-bold text-stone-900 mb-4 flex items-center gap-2">
+                    <span>🎯</span> Пропонована Система KPI для Відділу Підтримки
+                </h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs text-stone-700">
+                        <thead>
+                            <tr class="bg-stone-100 text-stone-800 font-semibold border-b border-stone-200">
+                                <th class="p-3">Метрика</th>
+                                <th class="p-3">Поточний Стан</th>
+                                <th class="p-3">Цільовий KPI</th>
+                                <th class="p-3">Інструмент Досягнення</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-stone-100">
+                            <tr>
+                                <td class="p-3 font-medium text-stone-900">Resolution Rate (Успішність)</td>
+                                <td class="p-3">81.2%</td>
+                                <td class="p-3 font-bold text-emerald-700">&gt; 85%</td>
+                                <td class="p-3">Швидкі скрипти cross-sell та розв'язання збоїв кошика</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-medium text-stone-900">First Response Time (FRT)</td>
+                                <td class="p-3">1.5 – 4 хвилини</td>
+                                <td class="p-3 font-bold text-emerald-700">&lt; 1 хвилини</td>
+                                <td class="p-3">Автоматичний віджет привітання та авто-ТТН</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-medium text-stone-900">Частка Оброблених B2B Ліди</td>
+                                <td class="p-3">Ручний переказ</td>
+                                <td class="p-3 font-bold text-emerald-700">100% за 15 хв</td>
+                                <td class="p-3">Пряма маршрутизація на B2B-менеджера в CRM</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-medium text-stone-900">CSAT (Оцінка Клієнтів)</td>
+                                <td class="p-3">9.23 / 10</td>
+                                <td class="p-3 font-bold text-emerald-700">&gt; 9.5 / 10</td>
+                                <td class="p-3">Мотивація та преміювання оператора Вікторії</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 7: WORD EXPORT / TEXT GENERATOR -->
+        <section id="content-export" class="tab-content hidden space-y-6">
+            
+            <div class="bg-amber-50/60 border border-amber-200/80 rounded-xl p-5">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <h2 class="text-base font-semibold text-amber-900 flex items-center gap-2 mb-1">
+                            <span>📄</span> Готовий Текст Звіту для Вставити в Word або Презентацію
+                        </h2>
+                        <p class="text-xs sm:text-sm text-stone-700 leading-relaxed">
+                            Ви можете скопіювати цей повністю відформатований текст нижче однією кнопкою та вставити його у стандартний документ Microsoft Word або на слайди для власників.
+                        </p>
+                    </div>
+                    <button onclick="copyWordText()" class="px-5 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white font-medium text-xs rounded-lg shadow-sm transition-all flex items-center gap-2 whitespace-nowrap self-start sm:self-center">
+                        <span id="copy-icon">📋</span> <span id="copy-text">Скопіювати Все для Word</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Formatted Textarea / View Box -->
+            <div class="bg-white p-6 rounded-xl border border-stone-200 shadow-sm">
+                <textarea id="wordReportContent" readonly class="w-full h-[500px] p-4 text-xs font-mono text-stone-800 bg-stone-50 rounded-lg border border-stone-200 focus:outline-none custom-scrollbar leading-relaxed">
+📊 СТРАТЕГІЧНИЙ ЗВІТ CX-АНАЛІТИКИ ТА ЕФЕКТИВНОСТІ ПІДТРИМКИ «ASIA FOODS»
+Аналітичний період: 27.07.2026 — 18.08.2026 (Повний зведений аналіз за 4 періоди)
+Обсяг вибірки: 168 сесій онлайн-чату (Prom.ua + Web Widget)
+Цільова аудиторія: Власники компанії, СЕО, Керівник відділу продажів та CX
+
+====================================================================
+1. 🎯 EXECUTIVE SUMMARY (РЕЗЮМЕ ДЛЯ КЕРІВНИЦТВА)
+====================================================================
+За аналізований період відділ онлайн-підтримки опрацював 168 звернень клієнтів. Аналіз показав високу клієнтоорієнтованість операторів (CSAT 9.23/10), але викрив суттєві системні втрати виручки через технічні збої сайту Prom.ua, відсутність автоматизації у неробочий час та розрив комунікації з фізичними магазинами.
+
+Ключові висновки:
+1. Ріст Resolution Rate з 62% до 81.2%: Оператор Вікторія показує еталонну роботу з утримання та допродажів (upsell/cross-sell), успішно оформлюючи замовлення вручну під час збоїв кошика.
+2. Втрата ~20% потенційних лідів у вихідні дні: Клієнти, які звертаються в Сб/Нд з проханням надати IBAN-реквізити або уточнити наявність, чекають відповіді до ранку понеділка. Частина з них скасовує замовлення.
+3. Неефективність рутинних операцій: 48.2% усіх звернень — це стандартні шаблонні питання («Де моє замовлення?», «Надішліть ТТН», «Адреса магазину»), які менеджери обробляють вручну.
+
+====================================================================
+2. 📈 ЗВЕДЕНА СТАТИСТИКА ЗА ВЕСЬ ПЕРІОД (ДИНАМІКА 4-Х ЕТАПІВ)
+====================================================================
+• Всього сесій у чаті: 168
+  - Етап 1 (27.07–31.07): 49
+  - Етап 2 (01.08–05.08): 38
+  - Етап 3 (06.08–14.08): 63
+  - Етап 4 (15.08–18.08): 18
+
+• Реальні цільові діалоги: 95 (56.5%)
+• Шаблонні авто-кліки (Доставка/Графік): 50 (29.8%)
+• Офлайн-форми (Неробочий час / Вихідні): 20 (11.9%)
+• Спам / Порожні / Тести: 7 (4.2%)
+
+• Resolution Rate (Успішність): 62.0% ➔ 66.7% ➔ 78.5% ➔ 81.2% (Стійке зростання)
+• Abandonment Rate (Відтік): 28.0% ➔ 16.7% ➔ 11.2% ➔ 9.1% (Падіння відтоку)
+• Середня оцінка операторів (CSAT): 8.2 ➔ 9.4 ➔ 9.6 ➔ 9.7 (Загальна: 9.23 / 10)
+
+====================================================================
+3. 🧩 СТРУКТУРА ЗАПИТІВ КЛІЄНТІВ ТА B2B-ЛІДИ
+====================================================================
+Розподіл причин звернень (N=168):
+1. Шаблонні питання бота (Доставка/Графік) — 29.8% (50 сесій)
+2. Консультація щодо товарів / Смаки / Наявність — 23.2% (39 сесій)
+   (Samyang Buldak, Shin Ramyun, Pepero Stray Kids, BTS Oreo, Тапіока, Соус Устричний)
+3. Офлайн-форми (Нічний час / Вихідні) — 11.9% (20 сесій)
+4. Статус замовлення / Затримка ТТН — 10.7% (18 сесій)
+5. Офлайн-магазини (Наявність у Києві/Житомирі/Львові) — 8.3% (14 сесій)
+6. B2B / Гурт / Співпраця (Ресторани, Мережі) — 6.5% (11 сесій)
+   * Фіксація ключових лідів:
+     - ДП «Пілснер Україна» (Імпортер пива та напоїв) — пропозиція співпраці.
+     - Ресторан «Ікігай» (Харків) — інгредієнти для закладу.
+     - Мережеві клієнти Дніпро (70 ТТ) та Рівне — оптові прайси, безнагал.
+     - Оптовий запит з м. Чернігів (Юрій).
+7. Технічні збої Prom.ua / Ручні замовлення — 5.4% (9 сесій)
+8. Спам / Тестові повідомлення — 4.2% (7 сесій)
+
+====================================================================
+4. 🚨 ТРІЙКА ГОЛОВНИХ "PAIN POINTS" (ДЕ КОМПАНІЯ ВТРАЧАЄ ГРОШІ)
+====================================================================
+🔴 1. Збої кошика на Prom.ua та відсутність рахунку в чаті
+- Суть: Покупці не можуть додати товар у кошик.
+- Вплив: Оператори вручну збирають замовлення та IBAN (8-12 хв на клієнта).
+
+🔴 2. "Сліпа зона" фізичних офлайн-магазинів
+- Суть: Запити щодо наявності в Києві/Львові/Житомирі перенаправляються на прямі телефони магазинів, де не беруть слухавку.
+- Вплив: Низькі оцінки та розчаровані покупці.
+
+🔴 3. Простій у вихідні дні (Субота після 16:00 та Неділя)
+- Суть: Оплата та IBAN видаються лише в понеділок о 09:00.
+- Вплив: Втрата конверсії гарячих оплат до 20%.
+
+====================================================================
+5. 👩‍💼 ПОРІВНЯЛЬНИЙ АНАЛІЗ РОБОТИ МЕНЕДЖЕРІВ
+====================================================================
+• Вікторія (Віка):
+  - Оброблено чатів: 142 (88% цільового потоку)
+  - CSAT: 9.6 / 10
+  - Сильні сторони: Сильний допродаж (upsell), вирішення складних кейсів, англомовні консультації, ручні перерахунки знижок.
+
+• Вероніка:
+  - Оброблено чатів: 26 (12% цільового потоку)
+  - CSAT: 7.8 / 10
+  - Сильні сторони: Лаконічна відповідь, робота з логістикою. Зона зростання — проактивність та пропозиція альтернатив.
+
+====================================================================
+6. 💡 СТРАТЕГІЧНИЙ ПЛАН АВТОМАТИЗАЦІЇ ТА KPI
+====================================================================
+1. Автоматична видача IBAN у неробочий час (Пріоритет №1) — економія 20% оплат.
+2. Інтеграція API Нової Пошти для авто-видачі ТТН за номером телефону.
+3. Інтеграція ПРРО (Checkbox/Вчасно) для видачі чеків з офлайн-магазинів у чаті за 30 сек.
+4. Автоматична маршрутизація B2B-запитів напряму на оптового менеджера в CRM.
+                </textarea>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-stone-200 py-6 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-stone-500">
+            Звіт сформовано системним аналітиком CX & Support AI Assistant | Asia Foods © 2026
+        </div>
+    </footer>
+
+    <!-- JavaScript Application Logic & Charts -->
+    <script>
+        // Tab Switching Logic
+        function switchTab(tabId) {
+            // Hide all tab content
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            
+            // Remove active style from all buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('tab-active'));
+
+            // Show selected tab content
+            const targetContent = document.getElementById('content-' + tabId);
+            if (targetContent) {
+                targetContent.classList.remove('hidden');
+            }
+
+            // Highlight active button
+            const targetBtn = document.getElementById('tab-' + tabId);
+            if (targetBtn) {
+                targetBtn.classList.add('tab-active');
+            }
+        }
+
+        // Copy Text for Word functionality
+        function copyWordText() {
+            const textarea = document.getElementById('wordReportContent');
+            textarea.select();
+            textarea.setSelectionRange(0, 99999); // Mobile
+            
+            navigator.clipboard.writeText(textarea.value).then(() => {
+                const copyText = document.getElementById('copy-text');
+                const copyIcon = document.getElementById('copy-icon');
+                
+                copyText.innerText = 'Скопійовано!';
+                copyIcon.innerText = '✅';
+
+                setTimeout(() => {
+                    copyText.innerText = 'Скопіювати Все для Word';
+                    copyIcon.innerText = '📋';
+                }, 3000);
+            }).catch(err => {
+                alert('Не вдалося скопіювати. Спробуйте виділити текст вручну.');
+            });
+        }
+
+        // Initialize Chart.js Data Visualizations
+        window.addEventListener('DOMContentLoaded', () => {
+            
+            // Chart 1: Dynamics Chart (Line)
+            const ctxDynamics = document.getElementById('dynamicsChart').getContext('2d');
+            new Chart(ctxDynamics, {
+                type: 'line',
+                data: {
+                    labels: ['Етап 1 (27-31.07)', 'Етап 2 (01-05.08)', 'Етап 3 (06-14.08)', 'Етап 4 (15-18.08)'],
+                    datasets: [
+                        {
+                            label: 'Resolution Rate (%)',
+                            data: [62.0, 66.7, 78.5, 81.2],
+                            borderColor: '#059669',
+                            backgroundColor: 'rgba(5, 150, 105, 0.1)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.3,
+                            pointRadius: 5
+                        },
+                        {
+                            label: 'Abandonment Rate (%)',
+                            data: [28.0, 16.7, 11.2, 9.1],
+                            borderColor: '#e11d48',
+                            backgroundColor: 'transparent',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            tension: 0.3,
+                            pointRadius: 4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + context.parsed.y + '%';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                callback: function(value) { return value + '%'; }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Chart 2: Category Breakdown Donut Chart
+            const ctxCategory = document.getElementById('categoryChart').getContext('2d');
+            new Chart(ctxCategory, {
+                type: 'doughnut',
+                data: {
+                    labels: [
+                        'Шаблонні авто-кліки',
+                        'Консультація по товарів',
+                        'Офлайн-форми (Ніч/Вихідні)',
+                        'Статус замовлення / ТТН',
+                        'Офлайн-магазини',
+                        'B2B / Гурт',
+                        'Збої Prom.ua / Ручні',
+                        'Спам / Тести'
+                    ],
+                    datasets: [{
+                        data: [50, 39, 20, 18, 14, 11, 9, 7],
+                        backgroundColor: [
+                            '#d97706',
+                            '#059669',
+                            '#e11d48',
+                            '#2563eb',
+                            '#8b5cf6',
+                            '#0284c7',
+                            '#dc2626',
+                            '#a8a29e'
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { 
+                            position: 'bottom',
+                            labels: {
+                                font: { size: 10 },
+                                boxWidth: 12
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Chart 3: Manager Comparison Bar Chart
+            const ctxManager = document.getElementById('managerChart').getContext('2d');
+            new Chart(ctxManager, {
+                type: 'bar',
+                data: {
+                    labels: ['Вікторія (Віка)', 'Вероніка'],
+                    datasets: [
+                        {
+                            label: 'Кількість оброблених чатів',
+                            data: [142, 26],
+                            backgroundColor: ['#059669', '#d97706'],
+                            borderRadius: 6
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+        });
+    </script>
+</body>
+</html>
